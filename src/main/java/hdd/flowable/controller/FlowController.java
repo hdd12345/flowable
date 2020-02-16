@@ -31,7 +31,7 @@ public class FlowController {
         Map<String,String> res =new HashMap<>();
 
         //String flowPath = ClassUtils.getDefaultClassLoader().getResource("static\\bpmn") + "\\test.bpmn20.xml";
-        String flowPath = "D:\\idea-workspace\\flowable\\target\\classes\\static\\bpmn\\test.bpmn20.xml";
+        String flowPath = "E:\\IDEA\\test-modeler.bpmn20.xml";
 
         if (null == flowService.createFlow(flowPath)){
             res.put("msg","创建流程失败");
@@ -42,6 +42,7 @@ public class FlowController {
         res.put("res","1");
         return res;
     }
+
 }
 
 

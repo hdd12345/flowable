@@ -1,12 +1,14 @@
 package hdd.flowable.serviceImpl;
 
 import hdd.flowable.service.FlowService;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.Process;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentBuilder;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +21,14 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Primary
 @Service("flowService")
 public class FlowServiceImpl implements FlowService {
 
-    /**
-     * 日志类
-     */
     private static final Logger log = LoggerFactory.getLogger(FlowServiceImpl.class);
     /**
      * Flowable运行时服务
@@ -79,5 +80,23 @@ public class FlowServiceImpl implements FlowService {
             }
         }
     }
+
+    @Override
+    public ProcessInstance startFlow(String processKey, Map<String, Object> paras) {
+        if (StringUtils.isEmpty(processKey)){
+            return null;
+        }
+        if (null == paras){
+            paras = new HashMap<>();
+        }
+        Deployment deployment = repositoryService.createDeploymentQuery().processDefinitionKey(processKey).singleResult();
+        if (deployment == null){
+            log.error("没有该流程");
+            return  null;
+        }
+        //return runtimeService.startProcessInstanceByKey(processKey,paras);
+        return null;
+    }
+
 }
 
