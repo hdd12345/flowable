@@ -1,10 +1,13 @@
 package hdd.flowable.controller;
 
+import hdd.flowable.entity.ActProcessType;
+import hdd.flowable.service.ActProcessTypeService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/process")
@@ -22,6 +26,20 @@ public class ProcessController {
     RepositoryService repositoryService;
     @Autowired
     RuntimeService runtimeService;
+    @Autowired
+    ActProcessTypeService actProcessTypeService;
+
+    /**
+     * 已部署流程列表页
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/uploadToView")
+    public String uploadToView(Model model) {
+        List<ActProcessType> list = actProcessTypeService.selectAll();
+        model.addAttribute("actProcessTypes", list);
+        return "page/process/editcontentpage";
+    }
 
     /**
      * 流程部署
