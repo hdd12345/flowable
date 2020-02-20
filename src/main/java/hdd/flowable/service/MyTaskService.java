@@ -6,7 +6,7 @@ import hdd.flowable.entity.TaskData;
 
 import java.util.List;
 
-public interface ShareniuTaskService {
+public interface MyTaskService {
 
     List<TaskData> taskListPage(String userId);
 

@@ -3,14 +3,14 @@ package hdd.flowable.service.impl;
 import hdd.flowable.dao.TaskDao;
 import hdd.flowable.entity.TaskAPIData;
 import hdd.flowable.entity.TaskData;
-import hdd.flowable.service.ShareniuTaskService;
+import hdd.flowable.service.MyTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ShareniuTaskServiceImpl  implements ShareniuTaskService {
+public class MyTaskServiceImpl implements MyTaskService {
 	@Autowired
 	private TaskDao taskDao;
 	@Override

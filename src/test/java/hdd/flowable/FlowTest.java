@@ -1,4 +1,5 @@
 package hdd.flowable;
+import hdd.flowable.dao.ActProcessTypeMapper;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.Process;
@@ -102,5 +103,13 @@ public class FlowTest {
     private static String getTask(TaskService taskService,String assignee){
         Task task = taskService.createTaskQuery().taskAssignee(assignee).singleResult();
         return task.getId();
+    }
+
+    @Autowired
+    ActProcessTypeMapper actProcessTypeMapper;
+
+    @Test
+    public void run1(){
+        System.out.println(actProcessTypeMapper.selectAll());
     }
 }

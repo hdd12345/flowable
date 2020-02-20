@@ -27,5 +27,6 @@ flowable:
     app:
       idm-url: http://127.0.0.1:9090/flowable-idm
 
-#mybatis:
-#  mapper-locations: classpath:mapper/*.xml
+mybatis:
+  mapper-locations: classpath*:hdd/flowable/dao/*.xml
+  type-aliases-package: hdd.flowable.entity
