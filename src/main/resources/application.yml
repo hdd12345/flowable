@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.89.188:3306/flowable_test?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/flowable_test?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
-    password: 123456
+    password: 1195811561
     #type: com.alibaba.druid.pool.DruidDataSource
 
 #  jpa:

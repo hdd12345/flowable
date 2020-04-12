@@ -1,7 +1,10 @@
 package hdd.flowable.controller;
 
+import hdd.flowable.config.Const;
 import hdd.flowable.entity.ActProcessType;
+import hdd.flowable.entity.Holiday;
 import hdd.flowable.service.ActProcessTypeService;
+import hdd.flowable.service.HolidayService;
 import hdd.flowable.service.ProcessDefService;
 import hdd.flowable.util.Parametermap;
 import org.apache.commons.io.IOUtils;
@@ -13,6 +16,7 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.idm.api.User;
 import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 @Controller
@@ -46,6 +51,8 @@ public class ProcessController {
 
     @Autowired
     ProcessDefService processDefService;
+    @Autowired
+    HolidayService holidayService;
 
     /**
      * 已部署流程列表页
@@ -54,8 +61,8 @@ public class ProcessController {
      */
     @RequestMapping(value = "/uploadToView")
     public String uploadToView(Model model) {
-        List<ActProcessType> list = actProcessTypeService.selectAll();
-        model.addAttribute("actProcessTypes", list);
+//        List<ActProcessType> list = actProcessTypeService.selectAll();
+//        model.addAttribute("actProcessTypes", list);
         return "page/process/editcontentpage";
     }
 
@@ -101,17 +108,39 @@ public class ProcessController {
 
     @RequestMapping(value = "/listView", method = RequestMethod.GET)
     public Object listView(Model model) {
-        List<ActProcessType> selectAll = actProcessTypeService.selectAll();
-        System.out.println(selectAll);
-        model.addAttribute("actProcessTypes", selectAll);
+//        List<ActProcessType> selectAll = actProcessTypeService.selectAll();
+//        System.out.println(selectAll);
+//        model.addAttribute("actProcessTypes", selectAll);
         return "page/process/list";
     }
 
+    /**
+     * 启动请假流程并保存请假单数据
+     * @param model
+     * @param processId
+     * @param processCategory
+     * @param request
+     * @return
+     */
     @RequestMapping("/startProcessInstance")
-    public Object startProcessInstance(Model model,String processId,String processCategory,HttpServletRequest request) {
+    public Object startProcessInstance(Model model,String processId,String processCategory,HttpServletRequest request) throws ParseException {
+        User user = (User) request.getSession().getAttribute(Const.SESSION_USER);
         Parametermap pm = new Parametermap(request);
-        ProcessInstance startProcessInstanceById = runtimeService.startProcessInstanceById(pm.get("processId").toString(), pm);
-        System.out.println("startProcessInstanceById:"+startProcessInstanceById);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Holiday holiday = holidayService.insert(new Holiday(pm.get("reason").toString(),sdf.parse(pm.get("start_xd").toString()),sdf.parse(pm.get("end_xd").toString()),user.getId()));
+        String bussinessKey = "";//业务ID
+        Map<String,Object> map = new HashMap<>();//流程变量map
+        map.put("applyUser",user.getId());
+        map.put("department","zhangsan");//部门经理
+        map.put("general","lisi");//总经理
+        map.put("hr","wangwu");//人事
+        map.put("days",(holiday.getEndTime().getTime()-holiday.getStartTime().getTime())/(3600*24*1000));
+        //启动流程实例
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(pm.get("processId").toString(),bussinessKey, map);
+        //请假申请人完成任务
+        Task task = taskService.createTaskQuery().taskAssignee(user.getId()).processInstanceId(processInstance.getId()).singleResult();
+        taskService.complete(task.getId());
+        System.out.println(task.getAssignee());
         return new ModelAndView("redirect:listView");
     }
     //Request URL: http://127.0.0.1:9100/process/imageDetailPage?processId=leave:1:13c3f4b2-34c9-11e8-bdbd-4a18e9fe68f7

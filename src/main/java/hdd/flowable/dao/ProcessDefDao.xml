@@ -11,14 +11,9 @@ FROM
 	SELECT
 		arp.KEY_ AS defKey,
 		arp.NAME_ AS processDefName,
-		a2.name_ AS processCategoryName,
-		a2.code_id AS processCategory,
 		arp.ID_  as processId
 	FROM
 		act_re_procdef arp
-		LEFT JOIN act_process_type a2 ON arp.CATEGORY_ = a2.code_id 
-		AND a2.state_ = 0 
-	
 	ORDER BY
 		arp.VERSION_ DESC 
 	) a

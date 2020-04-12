@@ -29,6 +29,8 @@ function delContentPage(id){
 		});
 	}
 }
+
+//启动流程
 function startFormPage(processId,processCategory){
 	window.location.href="/process/startFormPage?processId="+processId+"&processCategory="+processCategory;
 }
