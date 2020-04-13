@@ -1,9 +1,7 @@
 package hdd.flowable.controller;
 
 import hdd.flowable.config.Const;
-import hdd.flowable.entity.ActProcessType;
 import hdd.flowable.entity.Holiday;
-import hdd.flowable.service.ActProcessTypeService;
 import hdd.flowable.service.HolidayService;
 import hdd.flowable.service.ProcessDefService;
 import hdd.flowable.util.Parametermap;
@@ -42,8 +40,6 @@ public class ProcessController {
     RepositoryService repositoryService;
     @Autowired
     RuntimeService runtimeService;
-    @Autowired
-    ActProcessTypeService actProcessTypeService;
     @Autowired
     HistoryService historyService;
     @Autowired
@@ -128,13 +124,13 @@ public class ProcessController {
         Parametermap pm = new Parametermap(request);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Holiday holiday = holidayService.insert(new Holiday(pm.get("reason").toString(),sdf.parse(pm.get("start_xd").toString()),sdf.parse(pm.get("end_xd").toString()),user.getId()));
-        String bussinessKey = "";//业务ID
+        String bussinessKey = holiday.getId();//业务ID
         Map<String,Object> map = new HashMap<>();//流程变量map
         map.put("applyUser",user.getId());
         map.put("department","zhangsan");//部门经理
         map.put("general","lisi");//总经理
         map.put("hr","wangwu");//人事
-        map.put("days",(holiday.getEndTime().getTime()-holiday.getStartTime().getTime())/(3600*24*1000));
+        map.put("num",(holiday.getEndTime().getTime()-holiday.getStartTime().getTime())/(3600*24*1000));
         //启动流程实例
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(pm.get("processId").toString(),bussinessKey, map);
         //请假申请人完成任务
